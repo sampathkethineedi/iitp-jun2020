@@ -1,0 +1,109 @@
+openapi: 3.0.0
+info:
+  description: "Simple API to generate abstractive summaries."
+  version: "1.0.0"
+  title: "Abstractive Summarizer"
+  
+servers:
+  - url: http://tbd.tbd/summapi/v1.0.0/
+
+  
+paths:
+  /summ:
+    post:
+      tags:
+      - "Summarization"
+      summary: "Takes text to summarize and returns summary"
+      description: "Takes an input text, summarizes it and returns the summary"
+      
+      requestBody:
+        description: Text to be summarized and beam search parameter(optional)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                article:
+                  type: string
+                  description: "The text to be summarized"
+                num_beams:
+                  type: integer
+                  format: int64
+                  description: "Number of beams for beam search during generation. 4 by default. Cannot exceed 32"
+              required:
+                - article
+              example:
+                article: "SMS Derfflinger was a battlecruiser of the German Kaiserliche Marine built in the early 1910s, the lead vessel of the Derfflinger class. The ships were larger than the previous German battlecruisers, and featured significant improvements. Derfflinger served in I Scouting Group during the war and took part in attacks on Scarborough, Hartlepool and Whitby in 1914 and Yarmouth and Lowestoft in 1916, as well as the Battle of Dogger Bank in 1915 and the Battle of Jutland in 1916."
+                num_beams: 4
+      
+      responses:
+        "400":
+          description: "Invalid input"
+        "201":
+          description: "Text summarized, JSON object with summary returned"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  article:
+                    type: string
+                    description: "Text sent via POST request to be summarized"
+                  summary:
+                    type: string
+                    description: "Summary of the text provided"
+                example:
+                  article: "SMS Derfflinger was a battlecruiser of the German Kaiserliche Marine built in the early 1910s, the lead vessel of the Derfflinger class. The ships were larger than the previous German battlecruisers, and featured significant improvements. Derfflinger served in I Scouting Group during the war and took part in attacks on Scarborough, Hartlepool and Whitby in 1914 and Yarmouth and Lowestoft in 1916, as well as the Battle of Dogger Bank in 1915 and the Battle of Jutland in 1916."
+                  summary: "Derfflinger was a battlecruiser of the German Kaiserliche Marine. He served in I Scouting Group during the war and took part in attacks on Scarborough, Hartlepool and Whitby in 1914."
+      externalDocs:
+        description: "Learn more about the model used by the API for summarization"
+        url: https://huggingface.co/yuvraj/summarizer-cnndm
+  /xsumm:
+    post:
+      tags:
+      - "Extreme Summarization"
+      summary: "Generates one-line summary"
+      description: "Takes an input text, and returns an extreme summarization, that is, a one-line summary"
+      
+      requestBody:
+        description: Text to be summarized and beam search parameter(optional)
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                article:
+                  type: string
+                  description: "The text to be summarized"
+                num_beams:
+                  type: integer
+                  format: int64
+                  description: "Number of beams for beam search during generation. 4 by default. Cannot exceed 32"
+              required:
+                - article
+              example:
+                article: "SMS Derfflinger was a battlecruiser of the German Kaiserliche Marine built in the early 1910s, the lead vessel of the Derfflinger class. The ships were larger than the previous German battlecruisers, and featured significant improvements. Derfflinger served in I Scouting Group during the war and took part in attacks on Scarborough, Hartlepool and Whitby in 1914 and Yarmouth and Lowestoft in 1916, as well as the Battle of Dogger Bank in 1915 and the Battle of Jutland in 1916."
+                num_beams: 4
+      
+      responses:
+        "400":
+          description: "Invalid input"
+        "201":
+          description: "Text summarized, JSON object with summary returned"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  article:
+                    type: string
+                    description: "Text sent via POST request to be summarized"
+                  summary:
+                    type: string
+                    description: "One-line summary of the text provided"
+                example:
+                  article: "SMS Derfflinger was a battlecruiser of the German Kaiserliche Marine built in the early 1910s, the lead vessel of the Derfflinger class. The ships were larger than the previous German battlecruisers, and featured significant improvements. Derfflinger served in I Scouting Group during the war and took part in attacks on Scarborough, Hartlepool and Whitby in 1914 and Yarmouth and Lowestoft in 1916, as well as the Battle of Dogger Bank in 1915 and the Battle of Jutland in 1916."
+                  summary: "German warship Derfflinger was one of the world's most famous battlecruisers."
+      externalDocs:
+        description: "Learn more about the model used by the API for extreme summarization"
+        url: https://huggingface.co/yuvraj/xSumm
