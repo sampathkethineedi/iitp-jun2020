@@ -1,7 +1,6 @@
 ## Description
 Automatic Abstractive Summarization model built by fine tuning HuggingFace's BartForConditionalGeneration on the cnn-daily mail dataset.
 An API for the same built using flask and a simple front end built using streamlit.
-API specification can be found in flaskAPI/summApp_openapi.yaml
 
 ## How To use model (PyTorch model available):
 
@@ -39,4 +38,7 @@ summary = [tokenizer.decode(g, skip_special_tokens=True, clean_up_tokenization_s
 print(summary)
 
 ## To use the API:
-Find API script and corresponding OpenAPI specification [https://github.com/ust-ilabs/iitp-jun2020/tree/nlp-yuvrajraghuvanshi/summAPI]
+Find API script and corresponding OpenAPI specification in [this directory](https://github.com/ust-ilabs/iitp-jun2020/tree/nlp-yuvrajraghuvanshi/summAPI)
+
+## Front end
+Run flask API on localhost and subsequently run [summapp.py](https://github.com/ust-ilabs/iitp-jun2020/blob/nlp-yuvrajraghuvanshi/frontend/summapp.py) script using streamlit. Command for the same: *streamlit run sumapp.py*.
