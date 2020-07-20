@@ -39,4 +39,4 @@ summary = [tokenizer.decode(g, skip_special_tokens=True, clean_up_tokenization_s
 print(summary)
 
 ## To use the API:
-Find API script and corresponding OpenAPI specification [a link] (https://github.com/ust-ilabs/iitp-jun2020/tree/nlp-yuvrajraghuvanshi/summAPI)
+Find API script and corresponding OpenAPI specification [https://github.com/ust-ilabs/iitp-jun2020/tree/nlp-yuvrajraghuvanshi/summAPI]
