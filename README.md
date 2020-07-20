@@ -3,7 +3,7 @@ Automatic Abstractive Summarization model built by fine tuning HuggingFace's Bar
 An API for the same built using flask and a simple front end built using streamlit.
 
 ## How To use model (PyTorch model available):
-
+```python
 import transformers
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
@@ -36,6 +36,7 @@ cnn_generated_ids = cnn_model.generate(
 summary = [tokenizer.decode(g, skip_special_tokens=True, clean_up_tokenization_spaces=True) for g in cnn_generated_ids]
 
 print(summary)
+```
 
 ### Find description of available summarization models on transformers model hub [here](https://huggingface.co/yuvraj)
 
