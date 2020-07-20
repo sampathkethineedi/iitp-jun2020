@@ -37,6 +37,8 @@ summary = [tokenizer.decode(g, skip_special_tokens=True, clean_up_tokenization_s
 
 print(summary)
 
+### Find description of available summarization models on transformers model hub [here](https://huggingface.co/yuvraj)
+
 ## To use the API:
 Find API script and corresponding OpenAPI specification in [this directory](https://github.com/ust-ilabs/iitp-jun2020/tree/nlp-yuvrajraghuvanshi/summAPI)
 
