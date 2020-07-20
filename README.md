@@ -37,3 +37,6 @@ cnn_generated_ids = cnn_model.generate(
 summary = [tokenizer.decode(g, skip_special_tokens=True, clean_up_tokenization_spaces=True) for g in cnn_generated_ids]
 
 print(summary)
+
+## To use the API:
+Find API script and corresponding OpenAPI specification [a link] (https://github.com/ust-ilabs/iitp-jun2020/tree/nlp-yuvrajraghuvanshi/summAPI)
