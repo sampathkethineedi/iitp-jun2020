@@ -1,11 +1,13 @@
 swagger: "2.0"
 info:
-  description: "This is a paraphrase generator used for making paraphrases of given sentences. This uses the T5ForConditionalGeneration Model from the huggingface library. It is trained on the quora question pair dataset. The frontend is handled by streamlit and the backend is on flask."
+  description: "A Paraphrase-Generator built using transformers which takes an English sentence as an input and produces a set of paraphrased sentences.
+This is an NLP task of conditional text-generation. The model used here is the T5ForConditionalGeneration from the huggingface transformers library. 
+This model is trained on the Google's PAWS Dataset and the model is saved in the transformer model hub of hugging face library under the name Vamsi/T5_Paraphrase_Paws."
   version: "1.0.0"
   title: "Paraphrase Generator"
   contact:
     email: "saivamsi.ds123@gmail.com"
-host: "paraphrase.swagger.io"
+host: "http://ilabs-api-docs.s3-website-us-east-1.amazonaws.com/?urls.primaryName=nlp-paraphrase#/"
 basePath: "/"
 tags:
 - name: "Input from streamlit"
