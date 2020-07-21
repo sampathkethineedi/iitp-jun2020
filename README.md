@@ -7,7 +7,7 @@ This model is trained on the [Google's PAWS Dataset](https://github.com/google-r
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
@@ -21,17 +21,17 @@ These instructions will get you a copy of the project up and running on your loc
 - Streamlit
 
 ```
-pip install streamlit
+$ pip install streamlit
 ```
 
 - Huggingface transformers library
 ```
-pip install transformers
+$ pip install transformers
 ```
 
 - Tensorflow
 ```
-pip install --upgrade tensorflow
+$ pip install --upgrade tensorflow
 ```
 
 - Pytorch 
@@ -44,7 +44,7 @@ https://pytorch.org/
 
 - Clone the repository
 ```
-$ git clone 
+$ git clone [repolink] 
 ```
 - Running streamlit app
 ```

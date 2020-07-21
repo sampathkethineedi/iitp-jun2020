@@ -1,7 +1,9 @@
 from torch.utils.data import Dataset
 from transformers import T5Tokenizer
+import csv
 
 tokenizer = T5Tokenizer.from_pretrained('t5-base')
+
 
 class CustomDataset(Dataset):
     def __init__(self, tokenizer, data_dir, type_path, max_len=256):
@@ -56,4 +58,3 @@ class CustomDataset(Dataset):
 
             self.inputs.append(tokenized_inputs)
             self.targets.append(tokenized_targets)
-
