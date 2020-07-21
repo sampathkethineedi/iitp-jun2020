@@ -1,21 +1,33 @@
-from flask import Flask,request
+from flask import Flask, request
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 import torch
+import random
+
+from absl import logging
+
+import tensorflow as tf
+import tensorflow_hub as hub
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+import pandas as pd
+import re
+import seaborn as sns
 
 app = Flask(__name__)
 
-@app.route("/run_forward",methods=["POST"])
-def foward():
 
-    params = request.get_json()
-    sentence = params["sentence"]
-    decoding_params = params["decoding_params"]
+# Selecting the tokenizer
+def select_tokenizer(tokenizer_name):
+    if tokenizer_name == "t5-small":
+        tokenizer = T5Tokenizer.from_pretrained('T5-small')
+    else:
+        tokenizer = T5Tokenizer.from_pretrained('Vamsi/T5_Paraphrase_Paws')
+    return tokenizer
 
-    model = T5ForConditionalGeneration.from_pretrained('Vamsi/T5_Paraphrase_Paws')
-    tokenizer = T5Tokenizer.from_pretrained('Vamsi/T5_Paraphrase_Paws')
 
+def run_model(sentence, decoding_params, tokenizer, model):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print("device ", device)
     model = model.to(device)
 
     text = "paraphrase: " + sentence + " </s>"
@@ -25,12 +37,12 @@ def foward():
     encoding = tokenizer.encode_plus(text, pad_to_max_length=True, return_tensors="pt")
     input_ids, attention_masks = encoding["input_ids"].to(device), encoding["attention_mask"].to(device)
 
-    if (decoding_params["strategy"] == "Greedy Decoding"):
+    if decoding_params["strategy"] == "Greedy Decoding":
         beam_outputs = model.generate(
             input_ids=input_ids, attention_mask=attention_masks,
             max_length=max_len,
         )
-    elif (decoding_params["strategy"] == "Beam Search"):
+    elif decoding_params["strategy"] == "Beam Search":
         beam_outputs = model.generate(
             input_ids=input_ids, attention_mask=attention_masks,
             max_length=max_len,
@@ -50,13 +62,39 @@ def foward():
             num_return_sequences=decoding_params["return_sen_num"]  # Number of sentences to return
         )
 
-    paraphrases = []
-    temp = []
+    return beam_outputs
 
-    for line in beam_outputs:
+
+def preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, model):
+    for line in model_output:
         paraphrase = tokenizer.decode(line, skip_special_tokens=True, clean_up_tokenization_spaces=True)
         if paraphrase.lower() != sentence.lower() and paraphrase not in temp:
             temp.append(paraphrase)
+
+    if len(temp) < decoding_params["return_sen_num"]:
+        sentence = temp[random.randint(0, len(temp) - 1)]
+        model_output = run_model(sentence, decoding_params, tokenizer, model)
+        temp = preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, model)
+
+    return temp
+
+
+@app.route("/run_forward", methods=["POST"])
+def forward():
+    params = request.get_json()
+    sentence = params["sentence"]
+    decoding_params = params["decoding_params"]
+
+    tokenizer_name = decoding_params["tokenizer"]
+    model = T5ForConditionalGeneration.from_pretrained('Vamsi/T5_Paraphrase_Paws')
+    tokenizer = select_tokenizer(tokenizer_name)
+
+    model_output = run_model(sentence, decoding_params, tokenizer, model)
+
+    paraphrases = []
+    temp = []
+
+    temp = preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, model)
 
     for i, line in enumerate(temp):
         paraphrases.append(f"{i + 1}. {line}")
@@ -64,17 +102,19 @@ def foward():
     return {"data": paraphrases}
 
 
+@app.route("/embedding", methods=["POST"])
+def embedding():
+    params = request.get_json()
 
-@app.route("/")
-def home():
-    return "Hello"
+    sentence = params["sentence"]
+    paraphrased_sentences = params["output"]
 
-@app.route("/test",methods=["POST"])
-def test():
-    if(request.method == "POST"):
-        data = request.args
-        print(data)
-        return {"data" : data["q"]}
+    module_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
+    model_USE = hub.load(module_url)
+
+    embedding_vectors = model_USE(input)
+
+    return {"data": embedding_vectors}
 
 
 if __name__ == "__main__":
