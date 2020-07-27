@@ -40,7 +40,7 @@ Functionality (Can be run on Postman)
 
 This folder contains the frontend.py file for running the web app using streamlit.
 
-### Installing
+#### Installing
 
 - Streamlit
 
@@ -48,7 +48,7 @@ This folder contains the frontend.py file for running the web app using streamli
 $ pip install streamlit
 ```
 
-### Running the web app 
+#### Running the web app 
 
 - Running streamlit app
 
@@ -59,7 +59,17 @@ $ streamlit run frontend.py
 ```
 
 - Running the flask app
+In another terminal, run the following command
+*Make sure you are in the correct folder*
 ```
 $ python test_api.py
 ```
 
+Select the task to be done (Recognise, Register, Delete).
+
+### Authentication
+
+Now, Authentication is possible. A new api has been added ('/authenticate').
+The speaker name is given as input.
+First it checks whether the speaker has been registered or not. If the speaker name is not present, then *"SPEAKER NOT FOUND!!!"* message is displayed.
+If the speaker name is registered, it checks whether the similarity is above the threshold **0.82** (will be improved later). If it meets the condition, then it's a MATCH.
