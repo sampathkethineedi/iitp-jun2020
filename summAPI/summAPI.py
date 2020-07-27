@@ -16,32 +16,15 @@ cnn_model.to(device)
 xsumm_model = AutoModelForSeq2SeqLM.from_pretrained("yuvraj/xSumm")
 xsumm_model.to(device)
 
+def chunkstring(string, length):
+    return (string[0+i:length+i] for i in range(0, len(string), length))
+
 MAX_LEN = 1024
 SUMM_LEN = 250
 
-app = Flask(__name__)
-
-cnn_data = []
-xsumm_data = []
-@app.route("/summapi/v1.0.0")
-def home():
-    return "Welcome to summarizer API"
-
-@app.route('/summapi/v1.0.0/summ', methods=['POST'])
-def summ_post_article():
-    if not request.json or not 'article' in request.json:
-          abort(400)
-    if(len(cnn_data) >= 10): #just to keep the list short. Can modify/remove this as per wish
-      cnn_data.pop(0)
-    cnn_model.eval()
-    art = request.json['article']
-    max_len = 1024
-    num_beams = 4
-    if 'num_beams' in request.json:
-      num_beams = request.json['num_beams']
-      if(num_beams > 32):
-        num_beams = 32
-    with torch.no_grad():
+def cnn_summarize(max_len, num_beams, art):
+  cnn_model.eval()
+  with torch.no_grad():
       source = tokenizer.batch_encode_plus([art], max_length=max_len, pad_to_max_length=True,return_tensors='pt', truncation='only_first')
       source_ids = source['input_ids']
       source_mask = source['attention_mask']
@@ -58,6 +41,33 @@ def summ_post_article():
           )
       
       cnn_pred = [tokenizer.decode(g, skip_special_tokens=True, clean_up_tokenization_spaces=True) for g in cnn_generated_ids]
+      return cnn_pred
+
+app = Flask(__name__)
+
+cnn_data = []
+xsumm_data = []
+@app.route("/summapi/v1.0.0")
+def home():
+    return "Welcome to summarizer API"
+
+@app.route('/summapi/v1.0.0/summ', methods=['POST'])
+def summ_post_article():
+    if not request.json or not 'article' in request.json:
+          abort(400)
+    if(len(cnn_data) >= 10): #just to keep the list short. Can modify/remove this as per wish
+      cnn_data.pop(0)
+    art = request.json['article']
+    max_len = MAX_LEN
+    num_beams = 4
+    if 'num_beams' in request.json:
+      num_beams = request.json['num_beams']
+      if(num_beams > 32):
+        num_beams = 32
+    cnn_pred = ""
+    for chunk in chunkstring(art, 1000):
+      cnn_pred = cnn_pred + cnn_summarize(max_len, num_beams, chunk)[0]
+    cnn_pred = [cnn_pred]
     if not cnn_data:
       id = 0
     elif len(cnn_data) > 0:
@@ -66,6 +76,7 @@ def summ_post_article():
                  'article': art,
                  'summary': cnn_pred})
     return jsonify({'article': art, 'summary': cnn_pred}), 201
+
 
 
 @app.route('/summapi/v1.0.0/xsumm', methods=['POST'])
