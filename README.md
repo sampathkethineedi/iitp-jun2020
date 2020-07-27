@@ -53,14 +53,19 @@ answer = tokenizer.decode(tokenizer.convert_tokens_to_ids(answer_tokens))
 
 print(answer)
 ```
+
+## API
+Open API is available in SwaggerHub [click here](https://app.swaggerhub.com/apis/U671/Qaapi/1.0.0#/trial)
+
 ## Built With
 * Streamlit                : [The fastest way tobuild data apps](https://www.streamlit.io)
 * Flask                    : [Micro web framework](https://flask.palletsprojects.com/en/1.1.x/)
 * Transformers-Huggingface :[click here](https://huggingface.co/transformers/)
+* Swagger                  :[Swagger: API Documentation & Design Tools for Teams](https://swagger.io/)
 
 ## Authors
 * Drisya P
 
 ## Acknowledgments
 * Sampath Kethineedi
-* NLP TEAM UST GLOBAL ,Summer Intership 2020
+* NLP TEAM - UST GLOBAL ,Summer Intership 2020
