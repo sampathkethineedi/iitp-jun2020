@@ -16,11 +16,12 @@ cnn_model.to(device)
 xsumm_model = AutoModelForSeq2SeqLM.from_pretrained("yuvraj/xSumm")
 xsumm_model.to(device)
 
-def chunkstring(string, length):
-    return (string[0+i:length+i] for i in range(0, len(string), length))
+def chunkstring(string, chunk_size):
+    return (string[0+i:length+i] for i in range(0, len(string), chunk_size))
 
 MAX_LEN = 1024
 SUMM_LEN = 250
+CHUNK_SIZE = 4000 #Articles are broken down into chunks of this size and each chunk is summarized
 
 def cnn_summarize(max_len, num_beams, art):
   cnn_model.eval()
@@ -65,7 +66,7 @@ def summ_post_article():
       if(num_beams > 32):
         num_beams = 32
     cnn_pred = ""
-    for chunk in chunkstring(art, 1000):
+    for chunk in chunkstring(art, CHUNK_SIZE):
       cnn_pred = cnn_pred + cnn_summarize(max_len, num_beams, chunk)[0]
     cnn_pred = [cnn_pred]
     if not cnn_data:
