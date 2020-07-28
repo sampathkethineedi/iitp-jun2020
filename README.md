@@ -32,7 +32,7 @@ To run the backend in google colab ,check [here] ()
 
 
 ```python
-from 'transformers' import 'AutoTokenizer', 'AutoModelForQuestionAnswering'
+from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 tokenizer = AutoTokenizer.from_pretrained("ponmari/QuestionAnsweingBert")
 model = AutoModelForQuestionAnswering.from_pretrained("ponmari/QuestionAnsweingBert")
 
