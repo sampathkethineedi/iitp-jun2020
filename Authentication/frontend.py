@@ -27,7 +27,7 @@ def register():
         else:
             body = {"speaker": spk_name}
             r = req.post(URL,json=body)
-            st.write("<h1 style='text-align: center; color: red;'>SUCCESSFULLY REGISTERED</h1>" + spk_name)
+            st.markdown("<h4 style='color: green;'>SUCCESSFULLY REGISTERED</h4>" + spk_name, unsafe_allow_html=True)
             
     return
        
