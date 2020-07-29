@@ -17,6 +17,8 @@ import seaborn as sns
 app = Flask(__name__)
 
 output_cache = []
+input_sentence = ""
+
 
 # Selecting the tokenizer
 def select_tokenizer(tokenizer_name):
@@ -68,17 +70,37 @@ def run_model(sentence, decoding_params, tokenizer, model):
     return beam_outputs
 
 
+def checkDuplicate(paraphrase, decoding_params):
+
+    paraphrase_set = set(paraphrase.split(" "))
+    sentence_set = set(input_sentence.split(" "))
+
+    print(paraphrase, len(paraphrase_set.intersection(sentence_set)))
+
+    if len(paraphrase_set.intersection(sentence_set)) >= decoding_params["common"]:
+        return False
+    return True
+
+
 def preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, model):
+
+    removed_set = []
+
     for line in model_output:
         paraphrase = tokenizer.decode(line, skip_special_tokens=True, clean_up_tokenization_spaces=True)
         if paraphrase.lower() != sentence.lower() and paraphrase not in temp:
-            temp.append(paraphrase)
+            if checkDuplicate(paraphrase, decoding_params):
+                temp.append(paraphrase)
+            else:
+                removed_set.append(paraphrase)
 
     if len(temp) < decoding_params["return_sen_num"]:
-        sentence = temp[random.randint(0, len(temp) - 1)]
+        if len(removed_set) > 0:
+            sentence = removed_set[random.randint(0, len(removed_set) - 1)]
+        else:
+            sentence = temp[random.randint(0, len(temp) - 1)]
         model_output = run_model(sentence, decoding_params, tokenizer, model)
         temp = preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, model)
-
     return temp
 
 
@@ -87,6 +109,9 @@ def forward():
     params = request.get_json()
     sentence = params["sentence"]
     decoding_params = params["decoding_params"]
+
+    global input_sentence
+    input_sentence = sentence
 
     tokenizer_name = decoding_params["tokenizer"]
     model = T5ForConditionalGeneration.from_pretrained('Vamsi/T5_Paraphrase_Paws')

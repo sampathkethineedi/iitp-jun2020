@@ -29,7 +29,7 @@ def main():
     max_len = st.sidebar.slider("Max-Length", 0, 512, 256)
 
     # Calling get_Sliders() to get all the decoding parameters
-    decoding_params = get_sliders(decoding_strategy, max_len)
+    decoding_params = get_sliders(decoding_strategy, max_len, user_input)
 
     # Setting additional decoding params
     decoding_params["tokenizer"] = tokenizer_name
@@ -100,7 +100,7 @@ def make_map(sentence):
     return data["data"], data["paraphrased"]
 
 
-def get_sliders(decoding_strategy, max_len):
+def get_sliders(decoding_strategy, max_len, user_input):
     params = {}
 
     # Setting different parameters for Beam Search and top-p top-k sampling
@@ -117,7 +117,7 @@ def get_sliders(decoding_strategy, max_len):
         top_k = st.sidebar.slider("Top-K", 0, max_len)
         params["top_p"] = top_p
         params["top_k"] = top_k
-        params["temperature"] = st.sidebar.slider("Temperature", 0.0, 1.0)
+        params["common"] = st.sidebar.slider("Common Words", 0, len(user_input.split(" ")))
 
     return params
 
