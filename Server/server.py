@@ -70,35 +70,38 @@ def run_model(sentence, decoding_params, tokenizer, model):
     return beam_outputs
 
 
-def checkDuplicate(paraphrase, decoding_params):
+def checkDuplicate(paraphrase, decoding_params, temp):
+
+    split_sentence = input_sentence.split(" ")
 
     paraphrase_set = set(paraphrase.split(" "))
-    sentence_set = set(input_sentence.split(" "))
+    sentence_set = set(split_sentence)
 
     print(paraphrase, len(paraphrase_set.intersection(sentence_set)))
 
     if len(paraphrase_set.intersection(sentence_set)) >= decoding_params["common"]:
         return False
-    return True
+
+    else:
+        for line in temp:
+            line_set = set(line.split(" "))
+
+            if len(paraphrase_set.intersection(line_set)) > 7:
+                return False
+
+        return True
 
 
 def preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, model):
 
-    removed_set = []
-
     for line in model_output:
         paraphrase = tokenizer.decode(line, skip_special_tokens=True, clean_up_tokenization_spaces=True)
         if paraphrase.lower() != sentence.lower() and paraphrase not in temp:
-            if checkDuplicate(paraphrase, decoding_params):
+            if checkDuplicate(paraphrase, decoding_params, temp):
                 temp.append(paraphrase)
-            else:
-                removed_set.append(paraphrase)
 
     if len(temp) < decoding_params["return_sen_num"]:
-        if len(removed_set) > 0:
-            sentence = removed_set[random.randint(0, len(removed_set) - 1)]
-        else:
-            sentence = temp[random.randint(0, len(temp) - 1)]
+        sentence = input_sentence
         model_output = run_model(sentence, decoding_params, tokenizer, model)
         temp = preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, model)
     return temp
@@ -140,11 +143,13 @@ def embedding():
     sentence = params["sentence"]
     paraphrased_sentences = output_cache
 
+    paraphrased_sentences.append(sentence)
+
     module_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
     model_USE = hub.load(module_url)
 
     embedding_vectors = model_USE(paraphrased_sentences)
-    print(embedding_vectors.numpy().tolist())
+    # print(embedding_vectors.numpy().tolist())
 
     return {"data": embedding_vectors.numpy().tolist(), "paraphrased": paraphrased_sentences}
 
