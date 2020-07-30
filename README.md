@@ -14,3 +14,6 @@ I have used Google Colab to train my model. You can find all the necessary files
     For this project there was only one class (bags), if you are going to traing on more classes or some other class you would need to change the 'yolo.names', 'yolo.data' and  'yolov3_custom_train.cfg' files.
     
  After the training, the weights that I got can be found [here](https://drive.google.com/drive/folders/122lGgaOn_Yowh5xq-p4MpIbqhpCnwZ9G?usp=sharing).
+ 
+ ### The file 'yolov3_bagsd.ipynb' contains the code used for training and you need to run it on google colab.
+ ### The file 'test_yolov3.ipynb' contains the code used for testing (it was ran on jupyter notebook).
