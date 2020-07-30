@@ -20,4 +20,5 @@ I have used Google Colab to train my model. You can find all the necessary files
 
 # Result
 Output that I got after testing can be seen below.
-![Result](https://drive.google.com/file/d/1KeJeFtWFruNasAblIWWjXVmp-EjrXDsA/view?usp=sharing)
+
+![result](https://user-images.githubusercontent.com/57894429/88966929-b6c7de00-d2ca-11ea-9963-c16a29f69ea2.PNG)
