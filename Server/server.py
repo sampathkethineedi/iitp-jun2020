@@ -1,23 +1,18 @@
 from flask import Flask, request
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 import torch
-import random
 
-from absl import logging
-
-import tensorflow as tf
 import tensorflow_hub as hub
-import matplotlib.pyplot as plt
-import numpy as np
-import os
-import pandas as pd
-import re
-import seaborn as sns
 
+# import spacy
 app = Flask(__name__)
 
 output_cache = []
 input_sentence = ""
+
+# nlp = spacy.load('en')
+# grammar = Grammar(nlp)
+# nlp.add_pipe(grammar)
 
 
 # Selecting the tokenizer
@@ -44,6 +39,7 @@ def run_model(sentence, decoding_params, tokenizer, model):
         beam_outputs = model.generate(
             input_ids=input_ids, attention_mask=attention_masks,
             max_length=max_len,
+            num_return_sequences=decoding_params["return_sen_num"]
         )
     elif decoding_params["strategy"] == "Beam Search":
         beam_outputs = model.generate(
@@ -71,7 +67,6 @@ def run_model(sentence, decoding_params, tokenizer, model):
 
 
 def checkDuplicate(paraphrase, decoding_params, temp):
-
     split_sentence = input_sentence.split(" ")
 
     paraphrase_set = set(paraphrase.split(" "))
@@ -82,28 +77,32 @@ def checkDuplicate(paraphrase, decoding_params, temp):
     if len(paraphrase_set.intersection(sentence_set)) >= decoding_params["common"]:
         return False
 
-    else:
-        for line in temp:
-            line_set = set(line.split(" "))
+    # else:
+    #     for line in temp:
+    #         line_set = set(line.split(" "))
+    #         # grammar_check = nlp(line)
+    #         if len(paraphrase_set.intersection(line_set)) > 7:
+    #             return False
+    #         # elif grammar_check._.has_grammar_error:
+    #         #     return False
 
-            if len(paraphrase_set.intersection(line_set)) > 7:
-                return False
-
-        return True
+    return True
 
 
 def preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, model):
-
     for line in model_output:
         paraphrase = tokenizer.decode(line, skip_special_tokens=True, clean_up_tokenization_spaces=True)
         if paraphrase.lower() != sentence.lower() and paraphrase not in temp:
-            if checkDuplicate(paraphrase, decoding_params, temp):
+            if decoding_params["strategy"] != "Greedy Decoding":
+                if checkDuplicate(paraphrase, decoding_params, temp):
+                    temp.append(paraphrase)
+            else:
                 temp.append(paraphrase)
 
-    if len(temp) < decoding_params["return_sen_num"]:
-        sentence = input_sentence
-        model_output = run_model(sentence, decoding_params, tokenizer, model)
-        temp = preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, model)
+    # if len(temp) < decoding_params["return_sen_num"]:
+    #     sentence = input_sentence
+    #     model_output = run_model(sentence, decoding_params, tokenizer, model)
+    #     temp = preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, model)
     return temp
 
 
@@ -121,6 +120,8 @@ def forward():
     tokenizer = select_tokenizer(tokenizer_name)
 
     model_output = run_model(sentence, decoding_params, tokenizer, model)
+
+    print(model_output)
 
     paraphrases = []
     temp = []
@@ -152,6 +153,7 @@ def embedding():
     # print(embedding_vectors.numpy().tolist())
 
     return {"data": embedding_vectors.numpy().tolist(), "paraphrased": paraphrased_sentences}
+
 
 if __name__ == "__main__":
     app.run()

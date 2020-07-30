@@ -27,6 +27,7 @@ def main():
 
     # Slider for max_len
     max_len = st.sidebar.slider("Max-Length", 0, 512, 256)
+    wordOverlap = st.sidebar.slider("Common Words", 0, len(user_input.split(" ")))
 
     # Calling get_Sliders() to get all the decoding parameters
     decoding_params = get_sliders(decoding_strategy, max_len, user_input)
@@ -35,6 +36,7 @@ def main():
     decoding_params["tokenizer"] = tokenizer_name
     decoding_params["max_len"] = max_len
     decoding_params["strategy"] = decoding_strategy
+    decoding_params["common"] = wordOverlap
 
     # Number of beams should be always greater than or equal to the number of return sequences
     if decoding_strategy == "Beam Search":
@@ -117,7 +119,6 @@ def get_sliders(decoding_strategy, max_len, user_input):
         top_k = st.sidebar.slider("Top-K", 0, max_len)
         params["top_p"] = top_p
         params["top_k"] = top_k
-        params["common"] = st.sidebar.slider("Common Words", 0, len(user_input.split(" ")))
 
     return params
 
