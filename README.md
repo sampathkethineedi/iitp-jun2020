@@ -17,3 +17,7 @@ I have used Google Colab to train my model. You can find all the necessary files
  
  ### The file 'yolov3_bagsd.ipynb' contains the code used for training and you need to run it on google colab.
  ### The file 'test_yolov3.ipynb' contains the code used for testing (it was ran on jupyter notebook).
+
+# Result
+Output that I got after testing can be seen below.
+![Result](https://drive.google.com/file/d/1KeJeFtWFruNasAblIWWjXVmp-EjrXDsA/view?usp=sharing)
