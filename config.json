@@ -1,0 +1,10 @@
+{
+  "tokenizer": "t5-base",
+  "max_len": 256,
+  "return_sen_num": 3,
+  "strategy": "Beam Search",
+  "common": 5,
+  "beams": 4,
+  "ngram": 2,
+  "temperature": 0.2
+}
