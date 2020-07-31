@@ -1,4 +1,4 @@
-## Abstractive Summarizer
+# Abstractive Summarizer
 Automatic Abstractive Summarizer built by fine tuning HuggingFace's BartForConditionalGeneration model on the cnn-daily mail dataset.
 APIs for the summarizer built using flask and a simple web app for convenient usage built with streamlit.
 
@@ -79,7 +79,7 @@ Find scripts for the web apps in [frontend](https://github.com/ust-ilabs/iitp-ju
    1. The web app will open in your local machine's default browser after the above command is run
           
           
-### Summarizing text/pdf documents- General Summarizer
+## Summarizing text/pdf documents- Document Summarizer
 
 [Document Summarizer](https://github.com/ust-ilabs/iitp-jun2020/tree/nlp-yuvrajraghuvanshi/Document%20Summarizer) contains the python script for summarization of pdf/text files.
 Download the [Document Summarizer script](https://github.com/ust-ilabs/iitp-jun2020/blob/nlp-yuvrajraghuvanshi/Document%20Summarizer/General_Summarizer.py) and run it with
