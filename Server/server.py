@@ -1,18 +1,15 @@
+import random
+
 from flask import Flask, request
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 import torch
 
 import tensorflow_hub as hub
 
-# import spacy
 app = Flask(__name__)
 
 output_cache = []
 input_sentence = ""
-
-# nlp = spacy.load('en')
-# grammar = Grammar(nlp)
-# nlp.add_pipe(grammar)
 
 
 # Selecting the tokenizer
@@ -39,7 +36,7 @@ def run_model(sentence, decoding_params, tokenizer, model):
         beam_outputs = model.generate(
             input_ids=input_ids, attention_mask=attention_masks,
             max_length=max_len,
-            num_return_sequences=decoding_params["return_sen_num"]
+            # num_return_sequences=decoding_params["return_sen_num"]
         )
     elif decoding_params["strategy"] == "Beam Search":
         beam_outputs = model.generate(
@@ -77,14 +74,14 @@ def checkDuplicate(paraphrase, decoding_params, temp):
     if len(paraphrase_set.intersection(sentence_set)) >= decoding_params["common"]:
         return False
 
-    # else:
-    #     for line in temp:
-    #         line_set = set(line.split(" "))
-    #         # grammar_check = nlp(line)
-    #         if len(paraphrase_set.intersection(line_set)) > 7:
-    #             return False
-    #         # elif grammar_check._.has_grammar_error:
-    #         #     return False
+    else:
+        for line in temp:
+            line_set = set(line.split(" "))
+            # grammar_check = nlp(line)
+            if len(paraphrase_set.intersection(line_set)) > len(split_sentence)//2:
+                return False
+            # elif grammar_check._.has_grammar_error:
+            #     return False
 
     return True
 
@@ -93,16 +90,21 @@ def preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, 
     for line in model_output:
         paraphrase = tokenizer.decode(line, skip_special_tokens=True, clean_up_tokenization_spaces=True)
         if paraphrase.lower() != sentence.lower() and paraphrase not in temp:
-            if decoding_params["strategy"] != "Greedy Decoding":
+            if decoding_params["strategy"] == "Top-k, Top-p sampling":
                 if checkDuplicate(paraphrase, decoding_params, temp):
                     temp.append(paraphrase)
             else:
                 temp.append(paraphrase)
 
-    # if len(temp) < decoding_params["return_sen_num"]:
-    #     sentence = input_sentence
-    #     model_output = run_model(sentence, decoding_params, tokenizer, model)
-    #     temp = preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, model)
+    if decoding_params["strategy"] != "Greedy Decoding" and len(temp) < decoding_params["return_sen_num"]:
+        temp1 = temp
+        if decoding_params["strategy"] == "Top-k, Top-p sampling":
+            sentence = input_sentence
+        else:
+            sentence = temp1[random.randint(0, len(temp1)-1)]
+
+        model_output = run_model(sentence, decoding_params, tokenizer, model)
+        temp = preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, model)
     return temp
 
 
@@ -120,8 +122,6 @@ def forward():
     tokenizer = select_tokenizer(tokenizer_name)
 
     model_output = run_model(sentence, decoding_params, tokenizer, model)
-
-    print(model_output)
 
     paraphrases = []
     temp = []

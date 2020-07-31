@@ -27,7 +27,6 @@ def main():
 
     # Slider for max_len
     max_len = st.sidebar.slider("Max-Length", 0, 512, 256)
-    wordOverlap = st.sidebar.slider("Common Words", 0, len(user_input.split(" ")))
 
     # Calling get_Sliders() to get all the decoding parameters
     decoding_params = get_sliders(decoding_strategy, max_len, user_input)
@@ -36,7 +35,6 @@ def main():
     decoding_params["tokenizer"] = tokenizer_name
     decoding_params["max_len"] = max_len
     decoding_params["strategy"] = decoding_strategy
-    decoding_params["common"] = wordOverlap
 
     # Number of beams should be always greater than or equal to the number of return sequences
     if decoding_strategy == "Beam Search":
@@ -44,10 +42,13 @@ def main():
             num_return_sequences = st.sidebar.slider("Number of return sentences", 0, decoding_params["beams"])
         else:
             num_return_sequences = 5
-    else:
-        num_return_sequences = st.sidebar.slider("Number of return sentences", 0, 10)
+        decoding_params["return_sen_num"] = num_return_sequences
 
-    decoding_params["return_sen_num"] = num_return_sequences
+    elif decoding_strategy == "Top-k, Top-p sampling":
+        num_return_sequences = st.sidebar.slider("Number of return sentences", 0, 10)
+        decoding_params["return_sen_num"] = num_return_sequences
+        decoding_params["common"] = st.sidebar.slider("Common Words", 0, len(user_input.split(" ")))
+
     # Phrase it button
     if st.button("Phrase It"):
 
@@ -134,11 +135,14 @@ def forward(sentence, decoding_params):
 
 def check_exceptions(decoding_params):
     # Checking for zero on the num of return sequences
-    if decoding_params["return_sen_num"] == 0:
-        st.error("Please set the number of return sequences to more than one")
-        return True
-    return False
+    if decoding_params["strategy"] != "Greedy Decoding":
 
+        if decoding_params["return_sen_num"] == 0:
+            st.error("Please set the number of return sequences to more than one")
+            return True
+        return False
+    else:
+        return False
 
 if __name__ == "__main__":
     main()
