@@ -1,6 +1,6 @@
-## Description
-Automatic Abstractive Summarization model built by fine tuning HuggingFace's BartForConditionalGeneration on the cnn-daily mail dataset.
-An API for the same built using flask and a simple front end built using streamlit.
+## Abstractive Summarizer
+Automatic Abstractive Summarizer built by fine tuning HuggingFace's BartForConditionalGeneration model on the cnn-daily mail dataset.
+APIs for the summarizer built using flask and a simple web app for convenient usage built with streamlit.
 
 ## How To use model (PyTorch model available):
 ```python
@@ -41,7 +41,39 @@ print(summary)
 ### Find description of available summarization models on transformers model hub [here](https://huggingface.co/yuvraj)
 
 ## To use the API:
-Find API script and corresponding OpenAPI specification in [this directory](https://github.com/ust-ilabs/iitp-jun2020/tree/nlp-yuvrajraghuvanshi/summAPI)
+Find API scripts and corresponding OpenAPI specifications in [this directory](https://github.com/ust-ilabs/iitp-jun2020/tree/nlp-yuvrajraghuvanshi/summAPI).
 
-## Front end
-Run flask API on localhost and subsequently run [summapp.py](https://github.com/ust-ilabs/iitp-jun2020/blob/nlp-yuvrajraghuvanshi/frontend/summapp.py) script using streamlit. Command for the same: *streamlit run sumapp.py*.
+[SummAPI](https://github.com/ust-ilabs/iitp-jun2020/blob/nlp-yuvrajraghuvanshi/summAPI/summAPI.py) is an API written in flask that takes articles sent with POST requests and returns a summary or an extreme summary (one-line summary) of the article.
+SummAPI Swagger specification [here](https://github.com/ust-ilabs/iitp-jun2020/blob/nlp-yuvrajraghuvanshi/summAPI/summAPI_spec.yaml) 
+
+[SummAPIv2](https://github.com/ust-ilabs/iitp-jun2020/blob/nlp-yuvrajraghuvanshi/summAPI/summAPIv2.py) is a newer version of [SummAPI](https://github.com/ust-ilabs/iitp-jun2020/blob/nlp-yuvrajraghuvanshi/summAPI/summAPI.py) that improves on the previous version by adding a feature that finds similar articles to last summarized articles that were previously sumarized based on their summaries.
+Find Swagger specification for this API [here](https://github.com/ust-ilabs/iitp-jun2020/blob/nlp-yuvrajraghuvanshi/summAPI/summAPIv2_spec.yaml)
+
+### Running the API(s)
+
+#### Prerequisites
+
+* Transformers
+   * $ pip install transformers
+* Flask
+   * $ pip install flask
+* Streamlit
+   * $ pip install Streamlit     
+* Pytorch
+   * $ pip install torch
+
+## Web App
+Find scripts for the web apps in [frontend](https://github.com/ust-ilabs/iitp-jun2020/tree/nlp-yuvrajraghuvanshi/frontend) directory.
+
+[Sumapp](https://github.com/ust-ilabs/iitp-jun2020/blob/nlp-yuvrajraghuvanshi/frontend/summapp.py) is the old version of the web app, it has a simpl interface where you can paste the article in the provided text box, adjust the *number of beams* parameter as per your wish, and then click on *generate summary* or *generate extreme summary* buttons to request summaries from the API and display the summary.
+
+[SummDocsimApp](https://github.com/ust-ilabs/iitp-jun2020/blob/nlp-yuvrajraghuvanshi/frontend/SummDocsimApp.py) is the newer version of the web app, it is a superset of [Sumapp](https://github.com/ust-ilabs/iitp-jun2020/blob/nlp-yuvrajraghuvanshi/frontend/summapp.py) with the additional feature of getting similar articles with the click of a button. Note that only articles that have been summarized previously using the 'Generate Summary' (and NOT 'Generate Extreme Summary') button will be searched for similarity checking and returned. Also, you have to summarize the article before requesting for similar articles, as the API essentially returns articles similar to the most refcently summarized articles under the hood.
+
+
+### Running the Web Apps
+
+1. Run the Flask API script
+   1. $ python <path to summAPIv2.py> or $ python <path to summAPI.py>
+1. Run web app
+   1. $ streamlit run <path to SummDocsimApp.py> or $ streamlit run <path to summapp.py>
+   1. The web app will open in your local machine's default browser after the above command is run
