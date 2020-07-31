@@ -77,3 +77,27 @@ Find scripts for the web apps in [frontend](https://github.com/ust-ilabs/iitp-ju
 1. Run web app
    1. $ streamlit run <path to SummDocsimApp.py> or $ streamlit run <path to summapp.py>
    1. The web app will open in your local machine's default browser after the above command is run
+          
+          
+### Summarizing text/pdf documents- General Summarizer
+
+[Document Summarizer](https://github.com/ust-ilabs/iitp-jun2020/tree/nlp-yuvrajraghuvanshi/Document%20Summarizer) contains the python script for summarization of pdf/text files.
+Download the [Document Summarizer script](https://github.com/ust-ilabs/iitp-jun2020/blob/nlp-yuvrajraghuvanshi/Document%20Summarizer/General_Summarizer.py) and run it with
+$ python <path to your downloaded script>
+
+#### Prerequisites
+
+* Transformers
+   * $ pip install transformers   
+* Pytorch
+   * $ pip install torch
+* Tika
+   * $ pip install tika
+   
+The [script](https://github.com/ust-ilabs/iitp-jun2020/blob/nlp-yuvrajraghuvanshi/Document%20Summarizer/General_Summarizer.py) takes as terminal input the path (relative or absolute both paths work) of the document to be summarized. Note that for files that are not pdf/text format, the behaviour is undefined and may produce runtime exceptions.
+The outputs of the script:
+
+#### Outputs of [Document Summarizer](https://github.com/ust-ilabs/iitp-jun2020/blob/nlp-yuvrajraghuvanshi/Document%20Summarizer/General_Summarizer.py)
+
+* Paragraph wise summaries (Note that a pagebreak character in a pdf file will be considered as a paragraph break)  
+* Overall summary
