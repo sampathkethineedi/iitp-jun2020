@@ -1,4 +1,4 @@
-# Project Title
+# Paraphrase Generator
 
 A Paraphrase-Generator built using transformers which takes an English sentence as an input and produces a set of paraphrased sentences.
 This is an NLP task of conditional text-generation. The model used here is the [T5ForConditionalGeneration](https://huggingface.co/transformers/model_doc/t5.html#t5forconditionalgeneration) from the [huggingface transformers](https://huggingface.co/transformers)  library. 
@@ -102,8 +102,9 @@ for output in outputs:
 
 
 
+## Swagger Documentation
 
-
+The documentation can be found [here](http://ilabs-api-docs.s3-website-us-east-1.amazonaws.com/?urls.primaryName=nlp-paraphrase#/).
 
 
 ## Built With
@@ -111,6 +112,7 @@ for output in outputs:
 * [Streamlit](https://www.streamlit.io/) - Fastest way for building data apps
 * [Flask](https://flask.palletsprojects.com/en/1.1.x/) - Backend framework
 * [Transformers-Huggingface](https://huggingface.co/) - On a mission to solve NLP, one commit at a time. Transformers Library.
+* [Swagger API](https://swagger.io/tools/swagger-editor/) - API Development for Everyone
 
 
 ## Authors
