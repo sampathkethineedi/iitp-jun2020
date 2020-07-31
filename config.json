@@ -1,10 +1,15 @@
 {
   "tokenizer": "t5-base",
   "max_len": 256,
+
+
   "return_sen_num": 3,
-  "strategy": "Beam Search",
+  "strategy": "Top-p Top-k",
   "common": 5,
-  "beams": 4,
-  "ngram": 2,
-  "temperature": 0.2
+  "top_p": 0.98,
+  "top_k": 120
+
 }
+
+
+

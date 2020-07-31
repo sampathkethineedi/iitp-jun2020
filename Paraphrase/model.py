@@ -1,6 +1,6 @@
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 import torch
-
+import random
 
 class T5Model:
 
@@ -24,8 +24,7 @@ class T5Model:
         if self.decoding_params["strategy"] == "Greedy Decoding":
             beam_outputs = model.generate(
                 input_ids=input_ids, attention_mask=attention_masks,
-                max_length=max_len,
-                # num_return_sequences=self.decoding_params["return_sen_num"]
+                max_length=max_len
             )
         elif self.decoding_params["strategy"] == "Beam Search":
             beam_outputs = model.generate(
@@ -37,7 +36,7 @@ class T5Model:
                 temperature=self.decoding_params["temperature"],
                 num_return_sequences=self.decoding_params["return_sen_num"]  # Number of sentences to return
             )
-        else:
+        elif self.decoding_params["strategy"] == "Top-p Top-k":
             beam_outputs = model.generate(
                 input_ids=input_ids, attention_mask=attention_masks,
                 do_sample=True,
@@ -57,7 +56,7 @@ class T5Model:
         paraphrase_set = set(paraphrase.split(" "))
         sentence_set = set(split_sentence)
 
-        print(paraphrase, len(paraphrase_set.intersection(sentence_set)))
+        # print(paraphrase, len(paraphrase_set.intersection(sentence_set)))
 
         if len(paraphrase_set.intersection(sentence_set)) >= decoding_params["common"]:
             return False
@@ -66,7 +65,7 @@ class T5Model:
             for line in temp:
                 line_set = set(line.split(" "))
                 # grammar_check = nlp(line)
-                if len(paraphrase_set.intersection(line_set)) > 7:
+                if len(paraphrase_set.intersection(line_set)) > len(split_sentence)//2:
                     return False
                 # elif grammar_check._.has_grammar_error:
                 #     return False
@@ -77,44 +76,35 @@ class T5Model:
         for line in model_output:
             paraphrase = tokenizer.decode(line, skip_special_tokens=True, clean_up_tokenization_spaces=True)
             if paraphrase.lower() != sentence.lower() and paraphrase not in temp:
-                # if self.checkDuplicate(paraphrase, decoding_params, temp):
-                temp.append(paraphrase)
+                if decoding_params["strategy"] == "Top-k, Top-p sampling":
+                    if self.checkDuplicate(paraphrase, decoding_params, temp):
+                        temp.append(paraphrase)
+                else:
+                    temp.append(paraphrase)
 
-        # if len(temp) < decoding_params["return_sen_num"]:
-        #     sentence = self.sentence
-        #     model_output = self.run_model(sentence, decoding_params, tokenizer, model)
-        #     temp = self.preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, model)
+        if decoding_params["strategy"] != "Greedy Decoding" and len(temp) < decoding_params["return_sen_num"]:
+            temp1 = temp
+            if decoding_params["strategy"] == "Top-k, Top-p sampling":
+                sentence = self.sentence
+            else:
+                self.sentence = temp1[random.randint(0, len(temp1) - 1)]
+
+            model_output = self.run_model()
+            temp = self.preprocess_output(model_output, tokenizer, temp, sentence, decoding_params, model)
         return temp
 
     def forward(self, sentence):
 
-        # decoding_params = params["decoding_params"]
-
         self.sentence = sentence
-
-        # tokenizer_name = decoding_params["tokenizer"]
-        # model = T5ForConditionalGeneration.from_pretrained('Vamsi/T5_Paraphrase_Paws')
-        # tokenizer = select_tokenizer(tokenizer_name)
-
         model_output = self.run_model()
-
-        print(model_output)
 
         paraphrases = []
         temp = []
 
-        for line in model_output:
-            paraphrase = self.tokenizer.decode(line, skip_special_tokens=True, clean_up_tokenization_spaces=True)
-            if paraphrase.lower() != sentence.lower() and paraphrase not in temp:
-                # if self.checkDuplicate(paraphrase, decoding_params, temp):
-                temp.append(paraphrase)
+        temp = self.preprocess_output(model_output, self.tokenizer, temp, sentence, self.decoding_params, self.model)
 
-        # temp = self.preprocess_output(model_output, self.tokenizer, temp, sentence, self.decoding_params, self.model)
-
-        print(temp)
-
-        for i, line in enumerate(temp):
-            paraphrases.append(f"{i + 1}. {line}")
+        # for i, line in enumerate(temp):
+        #     paraphrases.append(f"{i + 1}. {line}")
 
         # return paraphrases
-        return []
+        return temp
