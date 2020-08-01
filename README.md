@@ -1,6 +1,8 @@
 # NLP, Computer Vision and Speech Processing - master
 Repo for code contributed by IIT Palakkad team June-July 2020
 
+WILL BE MADE PUBLIC AFTER REVIEW FOR YOU TO SHARE YOUR WORK
+
 ### Steps
 - Clone this repo
 - Create a new branch from master: `<task>-<name>` Example: `yolov3-sampathkethineedi`
